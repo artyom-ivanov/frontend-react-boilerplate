@@ -9,7 +9,6 @@ const gulp = require('gulp'),
 	concatCss = require('gulp-concat-css'),
 	concatJs = require('gulp-concat'),
 	minCss = require('gulp-clean-css'),
-	neat = require('bourbon-neat').includePaths,
 	notify = require('gulp-notify'),
 	plumber = require('gulp-plumber'),
 	pug = require('gulp-pug'),
@@ -35,12 +34,12 @@ gulp.task('html', () => (
 
 // Css
 gulp.task('css', () => (
-	gulp.src('src/scss/**/*.scss')
+	gulp.src('src/scss/main.scss')
 		.pipe(plumber({
 			errorHandler: notify.onError('👻 <%= error.message %>')
 		}))
 		.pipe(sourcemaps.init())
-		.pipe(sass({ includePaths: neat }).on('error', sass.logError))
+		.pipe(sass().on('error', sass.logError))
 		.pipe(autoprefixer({
 			browsers: ['last 6 versions']
 		}))

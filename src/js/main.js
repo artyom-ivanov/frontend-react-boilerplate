@@ -1,1 +1,1 @@
-process.env.NODE_ENV === 'dev' ? console.log('🛠 js/main.js') : null;
+console.log('🛠 js/main.js');

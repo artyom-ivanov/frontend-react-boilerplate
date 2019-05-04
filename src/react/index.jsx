@@ -4,10 +4,10 @@ import Promise from 'promise-polyfill';
 import 'whatwg-fetch';
 
 // Routing
-import routes from '@/router';
+import routes from './router';
 
 // Components
-import TestPage from '@/pages/test';
+import TestPage from '~/pages/test';
 
 if (!window.Promise) {
   window.Promise = Promise;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 // Components
-import Loader from '@/components/ui/loader';
+import Loader from '~/components/ui/loader';
 
 // Test data
 import config from './config';
@@ -31,19 +31,19 @@ class TestPage extends Component {
     const { routes } = this.props;
 
     console.log(`TestPage: Emulate request to ${routes.someRequest}`);
-    setTimeout(function(){
+    setTimeout(function() {
       parent.setState({
         data: config.data,
         loading: false,
       });
     }, 1000);
-  };
+  }
 
   prepareElements() {
     const { data } = this.state;
 
     const items = data.map(i => {
-      return <p>{`Element #${i}`}</p>;
+      return <p key={i}>{`Element #${i}`}</p>;
     });
 
     return items;
@@ -61,7 +61,7 @@ class TestPage extends Component {
         <h1>🛠 TestPage</h1>
         {this.prepareElements()}
       </React.Fragment>
-    )
+    );
   }
 }
 

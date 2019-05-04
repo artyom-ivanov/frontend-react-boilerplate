@@ -33,7 +33,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
-    '@': path.resolve(__dirname, './src/react')
+    alias: {
+      '~': path.resolve(__dirname, './src/react'),
+    },
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
