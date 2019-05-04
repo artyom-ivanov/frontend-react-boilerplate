@@ -1,16 +1,31 @@
 {
-  "name": "def-boilerplate",
+  "name": "boilerplate",
   "version": "1.0.0",
+  "description": "Frontend boilerplate (pug, scss, react)",
+  "main": "gulpfile.js",
   "scripts": {
-    "start": "gulp clean && gulp dev-build && gulp",
+    "start": "gulp",
     "dev": "webpack-dev-server --mode=development --hot --inline --host localhost --port 8080",
-    "static-build": "gulp clean && gulp build",
+    "static-build": "gulp build",
     "react-build": "cross-env NODE_ENV=production webpack --mode=production",
     "react-dev-build": "cross-env NODE_ENV=production webpack --mode=development",
     "build": "npm run static-build && npm run react-build",
     "lint": "eslint src -c .eslintrc --ext js,jsx",
     "lint-fix": "eslint src -c .eslintrc --ext js,jsx --fix"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/artyom.anmedio/boilerplate.git"
+  },
+  "keywords": [
+    "boilerplate"
+  ],
+  "author": "Artyom Ivanov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/artyom.anmedio/boilerplate/issues"
+  },
+  "homepage": "https://gitlab.com/artyom.anmedio/boilerplate#readme",
   "devDependencies": {
     "@babel/core": "^7.4.0",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
@@ -18,7 +33,7 @@
     "@babel/preset-react": "^7.0.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
-    "browser-sync": "^2.26.3",
+    "browser-sync": "^2.26.5",
     "concurrently": "^4.1.0",
     "css-loader": "^2.1.1",
     "eslint": "^5.16.0",
@@ -30,16 +45,13 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
     "friendly-errors-webpack-plugin": "^1.7.0",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^6.0.0",
+    "del": "^4.1.1",
+    "gulp": "^4.0.1",
+    "gulp-autoprefixer": "^6.1.0",
     "gulp-babel": "^8.0.0",
-    "gulp-clean": "^0.4.0",
-    "gulp-clean-css": "^4.0.0",
+    "gulp-clean-css": "^4.2.0",
     "gulp-concat": "^2.6.1",
-    "gulp-concat-css": "^3.1.0",
-    "gulp-connect": "^5.7.0",
     "gulp-imagemin": "^5.0.3",
-    "gulp-livereload": "^4.0.1",
     "gulp-notify": "^3.2.0",
     "gulp-plumber": "^1.2.1",
     "gulp-pug": "^4.0.1",
@@ -50,12 +62,13 @@
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-pngquant": "^7.0.0",
     "imagemin-svgo": "^7.0.0",
-    "prettier": "^1.16.4",
+    "node-sass": "^4.12.0",
     "react-hot-loader": "^4.8.2",
+    "prettier": "^1.16.4",
     "style-loader": "^0.23.1",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
-    "webpack-dev-server": "^3.2.1"
+    "webpack-dev-server": "^3.3.1"
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.3",

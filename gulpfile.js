@@ -1,96 +1,72 @@
-'use strict';
-
-const gulp = require('gulp'),
+const { src, dest, watch, series, parallel } = require('gulp');
+const pug = require('gulp-pug'),
 	browserSync = require('browser-sync').create(),
 	reload = browserSync.reload,
-	autoprefixer = require('gulp-autoprefixer'),
-	babel = require('gulp-babel'),
-	clean = require('gulp-clean'),
-	concatCss = require('gulp-concat-css'),
-	concatJs = require('gulp-concat'),
-	minCss = require('gulp-clean-css'),
 	notify = require('gulp-notify'),
+	babel = require('gulp-babel'),
 	plumber = require('gulp-plumber'),
-	pug = require('gulp-pug'),
-	rename = require('gulp-rename'),
 	sass = require('gulp-sass'),
+	concat = require('gulp-concat'),
+	rename = require('gulp-rename'),
+	autoprefixer = require('gulp-autoprefixer'),
 	sourcemaps = require('gulp-sourcemaps'),
 	uglify = require('gulp-uglify'),
 	imgmin = require('gulp-imagemin'),
 	mozjpeg = require('imagemin-mozjpeg'),
 	pngquant = require('imagemin-pngquant'),
-	svgo = require('imagemin-svgo');
+	svgo = require('imagemin-svgo'),
+	cleanCSS = require('gulp-clean-css'),
+	del = require('del');
 
-// Html
-gulp.task('html', () => (
-	gulp.src('src/pug/*.pug')
+function clean() {
+	return del('dist/*');
+}
+
+function html() {
+	return src('src/pug/*.pug')
 		.pipe(plumber({
 			errorHandler: notify.onError('👻 <%= error.message %>')
 		}))
-		.pipe(pug({ pretty: true }))
-		.pipe(gulp.dest('dist/'))
+    .pipe(pug({pretty: true}))
+    .pipe(dest('dist/'))
 		.pipe(reload({ stream: true }))
-));
+}
 
-// Css
-gulp.task('css', () => (
-	gulp.src('src/scss/main.scss')
+function css() {
+	return src('src/scss/main.scss')
 		.pipe(plumber({
 			errorHandler: notify.onError('👻 <%= error.message %>')
 		}))
 		.pipe(sourcemaps.init())
-		.pipe(sass().on('error', sass.logError))
+		.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
 		.pipe(autoprefixer({
 			browsers: ['last 6 versions']
 		}))
-		.pipe(minCss())
 		.pipe(rename('style.min.css'))
 		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest('dist/static/css/'))
-		.pipe(reload({ stream: true }))
-));
+		.pipe(dest('dist/static/css/'))
+		.pipe(reload({ stream: true }))	
+}
 
-// Js
-gulp.task('js', () => (
-	gulp.src(['src/js/*.js', '!src/js/index.js', '!src/js/router.js'])
+function js() {
+	return src('src/js/*.js')
 		.pipe(plumber({
 			errorHandler: notify.onError('👻 <%= error.message %>')
 		}))
 		.pipe(babel({
 			presets: ['@babel/env']
 		}))
-		.pipe(gulp.dest('dist/static/js'))
+		.pipe(dest('dist/static/js'))
 		.pipe(reload({ stream: true }))
-));
+}
 
-// Watch for react changes
-gulp.task('react-watch', () => (
-	gulp.src('src/react/**/*.*')
-		.pipe(reload({ stream: true }))
-));
+function fonts() {
+	return src('src/fonts/**/*.*')
+		.pipe(dest('dist/static/fonts'))
+}
 
-// Fonts
-gulp.task('fonts', () => (
-	gulp.src('src/fonts/**/*.*')
-		.pipe(gulp.dest('dist/static/fonts'))
-));
-
-// Images
-gulp.task('images', () => (
-	gulp.src('src/img/**/*.*')
-		.pipe(plumber({
-			errorHandler: notify.onError('👻 <%= error.message %>')
-		}))
-		.pipe(gulp.dest('dist/static/img'))
-		.pipe(reload({ stream: true }))
-));
-
-// Min images 
-gulp.task('min-images', () => (
-	gulp.src(['src/img/**/*.*', '!src/img/**/icons.svg'])
-		.pipe(plumber({
-			errorHandler: notify.onError('👻 <%= error.message %>')
-		}))
+function images() {
+	return src('src/img/**/*.*')
 		.pipe(imgmin([
 			pngquant(),
 			mozjpeg(),
@@ -98,59 +74,33 @@ gulp.task('min-images', () => (
 		], {
 			verbose: true
 		}))
-		.pipe(gulp.dest('dist/static/img'))
+		.pipe(dest('dist/static/img'))
+}
+
+function assetsCss() {
+	return src('src/assets/**/*.css')
+		.pipe(concat('assets.css'))
+		.pipe(cleanCSS())
+		.pipe(dest('./dist/static/assets'))
 		.pipe(reload({ stream: true }))
-));
+}
 
-// Svg sprite to dist
-gulp.task('svg-sprite', () => (
-	gulp.src('src/img/**/icons.svg')
-		.pipe(gulp.dest('dist/static/img'))
-		.pipe(reload({ stream: true }))
-));
-
-// Assets
-gulp.task('assets', ['assets-css', 'assets-js', 'assets-js-exc']);
-
-// Assets css
-gulp.task('assets-css', () => (
-	gulp.src('src/assets/**/*.css')
-		.pipe(concatCss('assets.css'))
-		.pipe(minCss())
-		.pipe(gulp.dest('./dist/static/assets'))
-		.pipe(reload({ stream: true }))
-));
-
-// Assets js
-gulp.task('assets-js', () => (
-	gulp.src(['src/assets/**/*.js', '!src/assets/svgxuse.min.js'])
-		.pipe(concatJs('assets.js'))
+function assetsJs() {
+	return src('src/assets/**/*.js')
+		.pipe(concat('assets.js'))
 		.pipe(uglify())
-		.pipe(gulp.dest('dist/static/assets'))
+		.pipe(dest('./dist/static/assets'))
 		.pipe(reload({ stream: true }))
-));
+}
 
-// Assets js exc
-gulp.task('assets-js-exc', () => (
-	gulp.src('src/assets/svgxuse.min.js')
-		.pipe(gulp.dest('dist/static/assets'))
-		.pipe(reload({ stream: true }))
-));
+function watching() {
+	watch('src/pug/**/*.pug', html)
+	watch('src/scss/**/*.scss', css);
+	watch('src/js/*.js', js);
+	watch('src/assets/**/*.*', parallel(assetsCss, assetsJs));
+}
 
-// Dev build
-gulp.task('dev-build', ['html', 'css', 'js', 'fonts', 'images', 'assets']);
-
-// Build 
-gulp.task('build', ['html', 'css', 'js', 'fonts', 'min-images', 'svg-sprite', 'assets']);
-
-// Clean
-gulp.task('clean', () => (
-	gulp.src('dist/', { read: false })
-		.pipe(clean())
-));
-
-// Connect
-gulp.task('browser-sync', () => {
+function browser() {
 	browserSync.init({
 		server: {
 			baseDir: './dist'
@@ -158,25 +108,26 @@ gulp.task('browser-sync', () => {
 		port: 3000,
 		notify: false
 	})
-});
+}
 
-// Watch
-gulp.task('watch', () => {
-	// html
-	gulp.watch('src/pug/**/*.pug', ['html']);
-
-	// sass
-	gulp.watch('src/scss/**/*.scss', ['css']);
-
-	// js
-	gulp.watch('src/js/*.js', ['js']);
-
-	// React changes
-	gulp.watch('src/react/**/*.*', ['react-watch']);
-
-	// img
-	gulp.watch('src/img/**/*.*', ['images']);
-});
-
-// Default
-gulp.task('default', ['browser-sync', 'watch']);
+exports.build = series(
+  clean,
+  parallel(html,css,js),
+  parallel(
+  	fonts,
+  	images,
+  	parallel(assetsCss,assetsJs)
+  )
+);
+exports.watch = watching;
+exports.clean = clean;
+exports.default = series(
+	clean,
+  parallel(html,css,js),
+  parallel(
+  	fonts,
+  	images,
+  	parallel(assetsCss,assetsJs)
+  ),
+	parallel(browser, watching)
+);
