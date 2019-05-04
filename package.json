@@ -1,5 +1,5 @@
 {
-  "name": "webpack & gulp boilerplate",
+  "name": "def-boilerplate",
   "version": "1.0.0",
   "scripts": {
     "start": "gulp clean && gulp dev-build && gulp",
@@ -30,7 +30,7 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
     "friendly-errors-webpack-plugin": "^1.7.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.1",
     "gulp-autoprefixer": "^6.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-clean": "^0.4.0",
@@ -64,6 +64,6 @@
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "whatwg-fetch": "^3.0.0",
+    "whatwg-fetch": "^3.0.0"
   }
 }
